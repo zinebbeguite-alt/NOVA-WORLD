@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>NOVA WORLD</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      background: #080510;
+      color: white;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .game {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 75% 25%, rgba(125, 65, 220, 0.35), transparent 30%),
+        linear-gradient(135deg, #090611, #160b2b 55%, #080510);
+    }
+
+    /* زخارف الخلفية */
+    .glow {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    .glow.one {
+      width: 180px;
+      height: 180px;
+      background: #743cff;
+      top: 8%;
+      right: 8%;
+    }
+
+    .glow.two {
+      width: 140px;
+      height: 140px;
+      background: #b46cff;
+      bottom: 5%;
+      left: 10%;
+    }
+
+    /* الشريط العلوي */
+    header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 75px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 35px;
+      background: rgba(5, 3, 10, 0.45);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(12px);
+      z-index: 10;
+    }
+
+    .logo {
+      font-size: 25px;
+      font-weight: 900;
+      letter-spacing: 3px;
+    }
+
+    .logo span {
+      color: #b875ff;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: #cfc8db;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #6cffb1;
+      box-shadow: 0 0 12px #6cffb1;
+    }
+
+    /* المحتوى */
+    .content {
+      position: relative;
+      z-index: 5;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 85px 35px 30px;
+    }
+
+    .hero {
+      width: min(1000px, 100%);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 35px;
+      align-items: center;
+    }
+
+    .text {
+      text-align: right;
+    }
+
+    .small-title {
+      color: #bb83ff;
+      font-size: 13px;
+      letter-spacing: 4px;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    h1 {
+      font-size: clamp(45px, 7vw, 85px);
+      line-height: 0.95;
+      letter-spacing: 4px;
+      margin-bottom: 20px;
+    }
+
+    h1 span {
+      color: #b875ff;
+      text-shadow: 0 0 30px rgba(184,117,255,0.35);
+    }
+
+    .description {
+      max-width: 500px;
+      color: #c7c1d2;
+      font-size: 16px;
+      line-height: 1.8;
+      margin-bottom: 25px;
+    }
+
+    /* الأزرار */
+    .buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      color: white;
+      font-size: 15px;
+      font-weight: bold;
+      padding: 14px 25px;
+      border-radius: 13px;
+      cursor: pointer;
+      min-width: 145px;
+      transition: 0.2s;
+    }
+
+    .play {
+      background: linear-gradient(135deg, #8c4cff, #bd72ff);
+      box-shadow: 0 8px 30px rgba(133,68,255,0.3);
+    }
+
+    .secondary {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    button:active {
+      transform: scale(0.95);
+    }
+
+    /* بطاقة العالم */
+    .world-card {
+      position: relative;
+      height: 360px;
+      border-radius: 25px;
+      overflow: hidden;
+      background:
+        linear-gradient(to top, rgba(5,3,10,0.95), rgba(5,3,10,0.05)),
+        linear-gradient(135deg, #28134b, #0b1022);
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 25px 70px rgba(0,0,0,0.4);
+    }
+
+    .city {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 52%;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .building {
+      width: 9%;
+      min-width: 25px;
+      background: linear-gradient(to top, #100a1c, #2a1a46);
+      border-top: 2px solid rgba(184,117,255,0.35);
+    }
+
+    .b1 { height: 35%; }
+    .b2 { height: 60%; }
+    .b3 { height: 45%; }
+    .b4 { height: 85%; }
+    .b5 { height: 55%; }
+    .b6 { height: 72%; }
+    .b7 { height: 40%; }
+    .b8 { height: 67%; }
+
+    .world-info {
+      position: absolute;
+      top: 25px;
+      right: 25px;
+      left: 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .world-name {
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .explore {
+      background: rgba(255,255,255,0.1);
+      padding: 8px 13px;
+      border-radius: 20px;
+      font-size: 12px;
+    }
+
+    .car {
+      position: absolute;
+      bottom: 42px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 190px;
+      height: 48px;
+      border-radius: 45px 55px 15px 15px;
+      background: linear-gradient(135deg, #d8d8df, #6d6877);
+      box-shadow: 0 10px 35px rgba(0,0,0,0.6);
+    }
+
+    .car::before {
+      content: "";
+      position: absolute;
+      width: 85px;
+      height: 32px;
+      top: -20px;
+      left: 52px;
+      border-radius: 35px 35px 5px 5px;
+      background: linear-gradient(135deg, #332d44, #120d1c);
+      border: 2px solid rgba(255,255,255,
