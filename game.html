@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>NOVA WORLD</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    user-select:none;
+    -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#090611;
+    font-family:Arial,sans-serif;
+    touch-action:none;
+}
+
+#game{
+    position:fixed;
+    inset:0;
+    width:100vw;
+    height:100vh;
+    overflow:hidden;
+    background:#16151d;
+}
+
+/* السماء */
+#sky{
+    position:absolute;
+    inset:0 0 48% 0;
+    background:linear-gradient(
+        #241541,
+        #56387d,
+        #9873a5
+    );
+}
+
+/* الشمس */
+#sun{
+    position:absolute;
+    width:70px;
+    height:70px;
+    border-radius:50%;
+    background:#ffd879;
+    box-shadow:0 0 35px rgba(255,216,121,.7);
+    top:12%;
+    left:13%;
+}
+
+/* الأرض */
+#ground{
+    position:absolute;
+    left:0;
+    right:0;
+    top:52%;
+    bottom:0;
+    background:#30343a;
+}
+
+/* الطريق */
+#road{
+    position:absolute;
+    left:0;
+    right:0;
+    top:67%;
+    height:33%;
+    background:#202329;
+    border-top:4px solid #555;
+}
+
+.road-line{
+    position:absolute;
+    top:50%;
+    width:13%;
+    height:5px;
+    background:#eee;
+    border-radius:5px;
+}
+
+.line1{left:3%}
+.line2{left:23%}
+.line3{left:43%}
+.line4{left:63%}
+.line5{left:83%}
+
+/* المباني */
+.building{
+    position:absolute;
+    bottom:33%;
+    background:#292432;
+    border:2px solid #464050;
+}
+
+.b1{
+    left:4%;
+    width:11%;
+    height:25%;
+}
+
+.b2{
+    left:17%;
+    width:10%;
+    height:18%;
+}
+
+.b3{
+    left:30%;
+    width:13%;
+    height:29%;
+}
+
+.b4{
+    right:28%;
+    width:10%;
+    height:21%;
+}
+
+.b5{
+    right:15%;
+    width:13%;
+    height:31%;
+}
+
+.b6{
+    right:2%;
+    width:10%;
+    height:23%;
+}
+
+/* النوافذ */
+.window{
+    position:absolute;
+    width:8px;
+    height:11px;
+    background:#ffd76b;
+    box-shadow:0 0 7px rgba(255,215,107,.5);
+}
+
+.w1{left:15%;top:15%}
+.w2{left:45%;top:15%}
+.w3{left:75%;top:15%}
+.w4{left:15%;top:40%}
+.w5{left:45%;top:40%}
+.w6{left:75%;top:40%}
+
+/* HUD */
+#hud{
+    position:absolute;
+    top:12px;
+    left:12px;
+    right:12px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    z-index:20;
+    pointer-events:none;
+}
+
+.hud-box{
+    background:rgba(10,7,20,.8);
+    border:1px solid rgba(190,150,255,.45);
+    border-radius:14px;
+    padding:8px 14px;
+    color:white;
+    font-size:14px;
+}
+
+.logo{
+    font-size:20px;
+    font-weight:bold;
+    letter-spacing:2px;
+    color:#d7b8ff;
+}
+
+/* اللاعب */
+#player{
+    position:absolute;
+    width:35px;
+    height:52px;
+    left:50%;
+    top:61%;
+    transform:translate(-50%,-50%);
+    z-index:10;
+}
+
+.head{
+    position:absolute;
+    width:20px;
+    height:20px;
+    border-radius:50%;
+    background:#e5b28b;
+    top:0;
+    left:7px;
+}
+
+.body{
+    position:absolute;
+    width:26px;
+    height:28px;
+    border-radius:8px 8px 4px 4px;
+    background:#7042b8;
+    top:18px;
+    left:4px;
+}
+
+.leg{
+    position:absolute;
+    width:8px;
+    height:15px;
+    background:#18181d;
+    bottom:0;
+    border-radius:4px;
+}
+
+.leg.left{left:7px}
+.leg.right{right:7px}
+
+/* السيارة */
+#car{
+    position:absolute;
+    width:100px;
+    height:48px;
+    left:70%;
+    top:76%;
+    z-index:8;
+    transform:translate(-50%,-50%);
+}
+
+.car-body{
+    position:absolute;
+    width:100%;
+    height:30px;
+    bottom:5px;
+    background:#713cc4;
+    border-radius:12px 20px 10px 10px;
+    box-shadow:0 5px 12px rgba(0,0,0,.5);
+}
+
+.car-top{
+    position:absolute;
+    width:55px;
+    height:24px;
+    top:0;
+    left:23px;
+    background:#59319c;
+    border-radius:20px 20px 5px 5px;
+}
+
+.wheel{
+    position:absolute;
+    width:19px;
+    height:19px;
+    background:#09090b;
+    border:3px solid #777;
+    border-radius:50%;
+    bottom:0;
+}
+
+.wheel1{left:12px}
+.wheel2{right:12px}
+
+/* التحكم */
+#controls{
+    position:absolute;
+    left:18px;
+    bottom:18px;
+    width:170px;
+    height:145px;
+    z-index:30;
+}
+
+.control{
+    position:absolute;
+    width:55px;
+    height:55px;
+    border:1px solid rgba(255,255,255,.25);
+    border-radius:16px;
+    background:rgba(15,10,25,.85);
+    color:white;
+    font-size:25px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    touch-action:none;
+}
+
+.control:active{
+    transform:scale(.92);
+    background:#7042b8;
+}
+
+.up{
+    left:57px;
+    top:0;
+}
+
+.down{
+    left:57px;
+    bottom:0;
+}
+
+.left{
+    left:0;
+    bottom:0;
+}
+
+.right{
+    right:0;
+    bottom:0;
+}
+
+/* الأزرار */
+#actions{
+    position:absolute;
+    right:18px;
+    bottom:18px;
+    display:flex;
+    gap:12px;
+    z-index:30;
+}
+
+.action{
+    width:65px;
+    height:65px;
+    border-radius:50%;
+    border:1px solid rgba(255,255,255,.25);
+    background:rgba(15,10,25,.85);
+    color:white;
+    font-size:13px;
+    font-weight:bold;
+    touch-action:none;
+}
+
+.action:active{
+    transform:scale(.92);
+    background:#7042b8;
+}
+
+/* الرسائل */
+#message{
+    position:absolute;
+    top:65px;
+    left:50%;
+    transform:translateX(-50%);
+    background:rgba(10,7,20,.9);
+    color:white;
+    padding:9px 18px;
+    border-radius:12px;
+    opacity:0;
+    transition:.2s;
+    z-index:50;
+    pointer-events:none;
+}
+
+#message.show{
+    opacity:1;
+}
+
+/* شاشة البداية */
+#startScreen{
+    position:absolute;
+    inset:0;
+    z-index:100;
+    background:radial-gradient(
+        circle at center,
+        rgba(111,62,180,.4),
+        rgba(5,4,10,.97)
+    );
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.start-box{
+    width:90%;
+    max-width:500px;
+    text-align:center;
+    color:white;
+}
+
+.title{
+    font-size:clamp(42px,9vw,78px);
+    font-weight:900;
+    letter-spacing:5px;
+    color:#d8bdff;
+    text-shadow:0 0 25px rgba(140,80,255,.7);
+}
+
+.subtitle{
+    margin-top:10px;
+    color:#c9c1d8;
+    font-size:15px;
+}
+
+#startButton{
+    margin-top:30px;
+    padding:15px 50px;
+    border:0;
+    border-radius:14px;
+    background:#7042b8;
+    color:white;
+    font-size:18px;
+    font-weight:bold;
+    touch-action:manipulation;
+}
+
+#startButton:active{
+    transform:scale(.95);
+}
+
+/* شاشة التدوير مخفية */
+#rotateMessage{
+    display:none;
+}
+
+/* الهاتف العمودي:
+   لا نخفي اللعبة */
+@media (orientation:portrait){
+
+    #rotateMessage{
+        display:none;
+    }
+
+    #game{
+        display:block;
+        width:100vw;
+        height:100vh;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- لم نعد نجبر الهاتف على شاشة "يرجى تدوير الجهاز" -->
+
+<div id="rotateMessage">
+    <div>
+        <div class="rotate-icon">📱↔️</div>
+        <h2>يرجى تدوير الجهاز</h2>
+        <p>اللعبة مصممة للوضع الأفقي.</p>
+    </div>
+</div>
+
+<div id="game">
+
+    <div id="sky"></div>
+    <div id="sun"></div>
+
+    <div class="building b1">
+        <span class="window w1"></span>
+        <span class="window w2"></span>
+        <span class="window w3"></span>
+        <span class="window w4"></span>
+        <span class="window w5"></span>
+        <span class="window w6"></span>
+    </div>
+
+    <div class="building b2">
+        <span class="window w1"></span>
+        <span class="window w3"></span>
+        <span class="window w4"></span>
+        <span class="window w6"></span>
+    </div>
+
+    <div class="building b3">
+        <span class="window w1"></span>
+        <span class="window w2"></span>
+        <span class="window w3"></span>
+        <span class="window w4"></span>
+        <span class="window w5"></span>
+        <span class="window w6"></span>
+    </div>
+
+    <div class="building b4">
+        <span class="window w1"></span>
+        <span class="window w3"></span>
+        <span class="window w4"></span>
+        <span class="window w6"></span>
+    </div>
+
+    <div class="building b5">
+        <span class="window w1"></span>
+        <span class="window w2"></span>
+        <span class="window w3"></span>
+        <span class="window w4"></span>
+        <span class="window w5"></span>
+        <span class="window w6"></span>
+    </div>
+
+    <div class="building b6">
+        <span class="window w1"></span>
+        <span class="window w3"></span>
+        <span class="window w4"></span>
+        <span class="window w6"></span>
+    </div>
+
+    <div id="ground"></div>
+
+    <div id="road">
+        <div class="road-line line1"></div>
+        <div class="road-line line2"></div>
+        <div class="road-line line3"></div>
+        <div class="road-line line4"></div>
+        <div class="road-line line5"></div>
+    </div>
+
+    <div id="hud">
+
+        <div class="hud-box logo">
+            NOVA WORLD
+        </div>
+
+        <div class="hud-box">
+            💰 <span id="money">5000</span> $
+        </div>
+
+        <div class="hud-box">
+            🚶 <span id="carStatus">على الأقدام</span>
+        </div>
+
+    </div>
+
+    <div id="message"></div>
+
+    <div id="player">
+        <div class="head"></div>
+        <div class="body"></div>
+        <div class="leg left"></div>
+        <div class="leg right"></div>
+    </div>
+
+    <div id="car">
+
+        <div class="car-top"></div>
+
+        <div class="car-body"></div>
+
+        <div class="wheel wheel1"></div>
+        <div class="wheel wheel2"></div>
+
+    </div>
+
+    <div id="controls">
+
+        <button class="control up" data-key="up">▲</button>
+
+        <button class="control down" data-key="down">▼</button>
+
+        <button class="control left" data-key="left">◀</button>
+
+        <button class="control right" data-key="right">▶</button>
+
+    </div>
+
+    <div id="actions">
+
+        <button class="action" id="carButton">
+            🚗<br>السيارة
+        </button>
+
+        <button class="action" id="interactButton">
+            ✋<br>تفاعل
+        </button>
+
+    </div>
+
+    <div id="startScreen">
+
+        <div class="start-box">
+
+            <div class="title">
+                NOVA WORLD
+            </div>
+
+            <div class="subtitle">
+                عالم مفتوح — استكشف، تحرك، وتفاعل
+            </div>
+
+            <button id="startButton">
+                دخول العالم
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+/* =========================
+   NOVA WORLD
+   ========================= */
+
+const player = document.getElementById("player");
+const car = document.getElementById("car");
+
+const startScreen =
+    document.getElementById("startScreen");
+
+const startButton =
+    document.getElementById("startButton");
+
+const carButton =
+    document.getElementById("carButton");
+
+const interactButton =
+    document.getElementById("interactButton");
+
+const carStatus =
+    document.getElementById("carStatus");
+
+const message =
+    document.getElementById("message");
+
+let gameStarted = false;
+let inCar = false;
+
+let playerX = window.innerWidth * 0.50;
+let playerY = window.innerHeight * 0.61;
+
+let carX = window.innerWidth * 0.70;
+let carY = window.innerHeight * 0.76;
+
+const speed = 5;
+
+const keys = {
+    up:false,
+    down:false,
+    left:false,
+    right:false
+};
+
+/* بدء اللعبة */
+
+startButton.addEventListener("click",function(){
+
+    gameStarted = true;
+
+    startScreen.style.display = "none";
+
+    showMessage("مرحبًا في NOVA WORLD");
+
+});
+
+/* رسالة */
+
+function showMessage(text){
+
+    message.textContent = text;
+
+    message.classList.add("show");
+
+    setTimeout(function(){
+
+        message.classList.remove("show");
+
+    },2000);
+}
+
+/* أزرار اللمس */
+
+document.querySelectorAll(".control").forEach(function(button){
+
+    const key = button.dataset.key;
+
+    function press(e){
+
+        e.preventDefault();
+
+        keys[key] = true;
+
+    }
+
+    function release(e){
+
+        e.preventDefault();
+
+        keys[key] = false;
+
+    }
+
+    button.addEventListener(
+        "touchstart",
+        press,
+        {passive:false}
+    );
+
+    button.addEventListener(
+        "touchend",
+        release,
+        {passive:false}
+    );
+
+    button.addEventListener(
+        "touchcancel",
+        release,
+        {passive:false}
+    );
+
+    button.addEventListener(
+        "mousedown",
+        press
+    );
+
+    button.addEventListener(
+        "mouseup",
+        release
+    );
+
+    button.addEventListener(
+        "mouseleave",
+        release
+    );
+
+});
+
+/* لوحة المفاتيح */
+
+document.addEventListener("keydown",function(e){
+
+    if(e.key==="ArrowUp" || e.key==="w")
+        keys.up=true;
+
+    if(e.key==="ArrowDown" || e.key==="s")
+        keys.down=true;
+
+    if(e.key==="ArrowLeft" || e.key==="a")
+        keys.left=true;
+
+    if(e.key==="ArrowRight" || e.key==="d")
+        keys.right=true;
+
+});
+
+document.addEventListener("keyup",function(e){
+
+    if(e.key==="ArrowUp" || e.key==="w")
+        keys.up=false;
+
+    if(e.key==="ArrowDown" || e.key==="s")
+        keys.down=false;
+
+    if(e.key==="ArrowLeft" || e.key==="a")
+        keys.left=false;
+
+    if(e.key==="ArrowRight" || e.key==="d")
+        keys.right=false;
+
+});
+
+/* حركة اللاعب */
+
+function updatePlayer(){
+
+    if(!gameStarted)
+        return;
+
+    let currentSpeed =
+        inCar ? 9 : speed;
+
+    if(keys.up)
+        playerY -= currentSpeed;
+
+    if(keys.down)
+        playerY += currentSpeed;
+
+    if(keys.left)
+        playerX -= currentSpeed;
+
+    if(keys.right)
+        playerX += currentSpeed;
+
+    playerX = Math.max(
+        20,
+        Math.min(
+            window.innerWidth - 20,
+            playerX
+        )
+    );
+
+    playerY = Math.max(
+        80,
+        Math.min(
+            window.innerHeight - 25,
+            playerY
+        )
+    );
+
+    player.style.left =
+        playerX + "px";
+
+    player.style.top =
+        playerY + "px";
+
+    if(inCar){
+
+        carX = playerX + 55;
+        carY = playerY + 20;
+
+        car.style.left =
+            carX + "px";
+
+        car.style.top =
+            carY + "px";
+
+    }
+
+}
+
+/* السيارة */
+
+carButton.addEventListener("click",function(){
+
+    if(!gameStarted)
+        return;
+
+    const dx =
+        playerX - carX;
+
+    const dy =
+        playerY - carY;
+
+    const distance =
+        Math.sqrt(dx*dx + dy*dy);
+
+    if(!inCar && distance < 130){
+
+        inCar = true;
+
+        carStatus.textContent =
+            "داخل السيارة";
+
+        showMessage(
+            "تم ركوب السيارة"
+        );
+
+    }
+
+    else if(inCar){
+
+        inCar = false;
+
+        carStatus.textContent =
+            "على الأقدام";
+
+        showMessage(
+            "تم النزول من السيارة"
+        );
+
+    }
+
+    else{
+
+        showMessage(
+            "اقترب من السيارة أولًا"
+        );
+
+    }
+
+});
+
+/* التفاعل */
+
+interactButton.addEventListener("click",function(){
+
+    if(!gameStarted)
+        return;
+
+    if(inCar){
+
+        showMessage(
+            "يمكن قيادة السيارة الآن"
+        );
+
+    }else{
+
+        showMessage(
+            "لا يوجد شيء للتفاعل معه هنا"
+        );
+
+    }
+
+});
+
+/* تشغيل اللعبة */
+
+function gameLoop(){
+
+    updatePlayer();
+
+    requestAnimationFrame(gameLoop);
+
+}
+
+gameLoop();
+
+/* تغيير حجم الشاشة */
+
+window.addEventListener("resize",function(){
+
+    playerX =
+        Math.min(
+            playerX,
+            window.innerWidth - 20
+        );
+
+    playerY =
+        Math.min(
+            playerY,
+            window.innerHeight - 25
+        );
+
+});
+
+/* منع قائمة الضغط المطول */
+
+document.addEventListener(
+    "contextmenu",
+    function(e){
+
+        e.preventDefault();
+
+    }
+);
+
+</script>
+
+</body>
+</html>
